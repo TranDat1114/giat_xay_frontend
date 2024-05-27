@@ -7,7 +7,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
     return (
         <div>
-            <div className="w-full shadow-lg rounded-lg">
+            <div className="w-full shadow-lg rounded-lg mb-16">
                 <Header />
             </div>
             <main className="my-2">{children}</main> {/* Main content */}

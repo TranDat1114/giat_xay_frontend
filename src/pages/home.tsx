@@ -5,28 +5,36 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import axios from "axios"
 import Autoplay from "embla-carousel-autoplay"
 
-import banner1 from "@/assets/GiatSayNhanh-main-banner.jpg"
-import banner2 from "@/assets/GiatSayNhanh-banner-2.jpg"
-import banner3 from "@/assets/GiatSayNhanh-banner-3a.jpg"
+import { useEffect, useState } from "react"
 interface Image {
-    src: string
-
+    url: string
+    name: string
+    groupType: string
 }
-const imageList: Image[] = [
-    {
-        src: banner1
-    },
-    {
-        src: banner2
-    },
-    {
-        src: banner3
-    }
-]
 
 const HomePage = () => {
+    const [imageList, setImageList] = useState<Image[]>([]);
+
+    useEffect(() => {
+        axios.request({
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${import.meta.env.VITE_API_URL}/images`,
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            setImageList(response.data)
+
+        }).catch((error) => {
+            console.log(error);
+        });
+    }, [setImageList]);
+
     return (
         <div className="flex flex-col gap-y-4">
             <Carousel id="home-section-1" className="w-full" opts={
@@ -44,7 +52,7 @@ const HomePage = () => {
                 <CarouselContent>
                     {imageList.map((image, index) => (
                         <CarouselItem key={index}>
-                            <img className="object-cover object-top" src={image.src} style={
+                            <img className="object-cover object-top" src={`${import.meta.env.VITE_API_URL}${image.url}`} style={
                                 {
                                     width: "100%",
                                     height: "550px",
@@ -58,7 +66,7 @@ const HomePage = () => {
             </Carousel>
             <div id="home-section-2" className="flex flex-col items-center">
                 <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">Quy trình giao nhận đơn giản</h2>
-                <div className="grid grid-cols-12 justify-center items-center mt-12">
+                <div className="grid grid-cols-12 justify-center items-center mt-12 gap-x-4">
                     <div className="col-span-3">
                         <img src="https://giatsaynhanh.vn/wp-content/uploads/2018/03/Quy-Trnh-Giao-Nhn-Bc-1-GiatSayNhanh.png" alt="" />
                     </div>
