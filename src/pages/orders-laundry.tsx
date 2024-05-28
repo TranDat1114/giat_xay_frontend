@@ -30,6 +30,7 @@ import { LaundryService } from "@/lib/types"
 import { useNavigate } from "react-router-dom"
 const formSchema = z.object({
     name: z.string(),
+    email: z.string().email({}).optional(),
     phoneNumber: z.string().regex(/^[0-9]{10}$/, {
         message: "Số điện thoại không hợp lệ"
     }),
@@ -133,6 +134,22 @@ const OrderLaundryPage = () => {
                                         </FormControl>
                                         <FormDescription>
                                             Nhập họ và tên của bạn ở đây.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col gap-y-1">
+                                        <FormLabel htmlFor="email">Email</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Nhập email của bạn..." type="text" id="email" {...field} />
+                                        </FormControl>
+                                        <FormDescription>
+                                            Nhập email của bạn ở đây.
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>

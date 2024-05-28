@@ -12,34 +12,13 @@ import { cn, isAdmin, isLoggedIn } from '@/lib/utils';
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import React, { useState, useEffect } from "react";
 
-import { LaundryService } from '@/lib/types';
-import axios from "axios";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
+import { useSingleton } from "@/context/SingletonContext";
 
 const NavigationBar = () => {
-    const [laundryService, setLaundryService] = useState<LaundryService[]>([]);
-
-    useEffect(() => {
-
-        axios.request({
-            method: 'get',
-            maxBodyLength: Infinity,
-            url: `${import.meta.env.VITE_API_URL}/laundry-services`,
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }).then((response) => {
-            setLaundryService(response.data)
-
-        }).catch((error) => {
-            console.log(error);
-        });
-    }, []);
-
+    const {laundryService} = useSingleton();
     const { logout } = useAuth();
     // const navigate = useNavigate();
     return (
@@ -57,16 +36,22 @@ const NavigationBar = () => {
                     <NavigationMenuContent>
                         <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
                             {laundryService.map((service) => (
-                                <NavLink to={`/orders-laundry/${service.guid}`}
-                                    key={service.guid}>
-                                    <ListItem
-
-                                        title={service.name}
+                                <li key={service.guid}>
+                                <NavigationMenuLink asChild>
+                                    <NavLink
+                                        to={`/orders-laundry/${service.guid}`}
+                                        className={cn(
+                                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                                          
+                                        )}
                                     >
-
+                                        <div className="text-sm font-medium leading-none">{service.name}</div>
+                                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                                         {service.description}
-                                    </ListItem>
-                                </NavLink>
+                                        </p>
+                                    </NavLink>
+                                </NavigationMenuLink>
+                            </li>
                             ))}
                         </ul>
                     </NavigationMenuContent>
@@ -85,13 +70,13 @@ const NavigationBar = () => {
                         </NavLink>
                     </p>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
+                {/* <NavigationMenuItem>
                     <NavLink to="/orders-laundry" >
                         <p className={`text-lg font-semibold bg-primary/80 px-4 py-2 rounded-lg mx-2 text-background hover:bg-primary`}>
                             Giặt ngay
                         </p>
                     </NavLink>
-                </NavigationMenuItem>
+                </NavigationMenuItem> */}
                 {
                     isAdmin() == true ?
                         <NavigationMenuItem>
@@ -153,29 +138,4 @@ const NavigationBar = () => {
         </NavigationMenu>
     );
 }
-const ListItem = React.forwardRef<
-    React.ElementRef<"a">,
-    React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-    return (
-        <li>
-            <NavigationMenuLink asChild>
-                <a
-                    ref={ref}
-                    className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                        className
-                    )}
-                    {...props}
-                >
-                    <div className="text-sm font-medium leading-none">{title}</div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        {children}
-                    </p>
-                </a>
-            </NavigationMenuLink>
-        </li>
-    )
-})
-ListItem.displayName = "ListItem"
 export default NavigationBar;

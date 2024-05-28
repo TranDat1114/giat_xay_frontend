@@ -11,6 +11,8 @@ import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from '@/components/ui/tooltip';
 import OrdersLaundryPage from '@/pages/orders-laundry';
 import CompleteOrdersLaundryPage from '@/pages/complete-orders-laundry';
+import { SingletonProvider } from '@/context/SingletonContext';
+import ContactPage from './pages/contact';
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   return isAdmin() ? children : <Navigate to="/signin" />;
 };
@@ -20,29 +22,32 @@ function App() {
 
   return (
     <Router>
-      <AuthProvider>
-        <TooltipProvider>
-          <Layout>
-            <Routes>
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/signup" element={isLoggedIn() ? <Navigate to="/dashboard" /> : <SignUpPage />} />
+      <SingletonProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Layout>
+              <Routes>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/signup" element={isLoggedIn() ? <Navigate to="/dashboard" /> : <SignUpPage />} />
 
-              <Route path="/" element={<HomePage />} />
+                <Route path="/" element={<HomePage />} />
 
-              <Route path="/signin" element={isLoggedIn() ? <Navigate to="/" /> : <SignInPage />} />
-              <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
+                <Route path="/signin" element={isLoggedIn() ? <Navigate to="/" /> : <SignInPage />} />
+                <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
 
-              <Route path="/orders-laundry/:guid" element={<OrdersLaundryPage />} />
+                <Route path="/orders-laundry/:guid" element={<OrdersLaundryPage />} />
 
-              <Route path="/complete-orders-laundry" element={<CompleteOrdersLaundryPage />} />
+                <Route path="/complete-orders-laundry" element={<CompleteOrdersLaundryPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="*" element={<div>404</div>} />
+              </Routes>
+            </Layout>
+          </TooltipProvider>
+        </AuthProvider>
+        <Toaster />
 
-              <Route path="*" element={<div>404</div>} />
-            </Routes>
-          </Layout>
-        </TooltipProvider>
-      </AuthProvider>
-      <Toaster />
+      </SingletonProvider>
     </Router>
 
   )

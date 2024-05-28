@@ -1,12 +1,13 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from "sonner"
 interface AuthContextType {
     accessToken: string | null;
-    login: (username: string, password: string) => Promise<void>;
+    login: (email: string, password: string) => Promise<void>;
     logout: () => void;
-    register: (username: string, password: string) => Promise<void>;
+    register: (email: string, password: string) => Promise<void>;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -63,7 +64,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             axios.request(userInforConfig).then((response) => {
                 console.log(response.data);
-                sessionStorage.setItem('role', response.data.role);
+                sessionStorage.setItem('user-info', JSON.stringify(response.data));
                 if (response.data.role === 'Admin') {
                     navigate('/dashboard');
                 } else {
@@ -89,7 +90,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 })
             }
         });
-
     };
 
     const register = async (email: string, password: string) => {
@@ -129,14 +129,12 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 })
             }
         });
-
-
     }
 
     const logout = async () => {
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
-        sessionStorage.removeItem('role');
+        sessionStorage.removeItem('user-info');
         setAccessToken(null);
         navigate('/'); // Điều hướng sau khi đăng xuất
 

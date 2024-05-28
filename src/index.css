@@ -55,6 +55,10 @@
     @apply border-border;
   }
 
+  html{
+    scroll-behavior: smooth
+  }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -63,4 +67,11 @@
     font-weight: 600;
     @apply text-primary;
   }
+}
+
+.border-bar {
+  width: 128px;
+}
+.animate-border-w:hover .border-bar{
+  width: 250px;
 }
