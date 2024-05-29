@@ -9,8 +9,8 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
     return (
-        <div className="relative">
-            <div className="w-full shadow-lg rounded-lg mb-16">
+        <div className="relative flex min-h-screen flex-col bg-background">
+            <div className="sticky top-0 z-50 w-full border-b border-border/40 bg-background backdrop-blur">
                 <Header />
             </div>
             <main className="my-2 min-h-svh pt-4">{children}</main> {/* Main content */}
@@ -18,8 +18,8 @@ const Layout = ({ children }: LayoutProps) => {
                 <Footer />
             </footer>
 
-            <Button variant={"default"} size={ "icon"} onClick={() => window.scrollTo(0, 0)} className="fixed bottom-4 right-4">
-                <ChevronUp size={24} />
+            <Button variant={"outline"} size={ "icon"} onClick={() => window.scrollTo(0, 0)} className="rounded-full fixed bottom-4 right-4 ">
+                <ChevronUp size={32} />
             </Button>
 
         </div>

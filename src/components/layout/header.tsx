@@ -26,7 +26,7 @@ const Header = () => {
     // };
 
     return (
-        <header id="header" className="mx-auto lg:px-36 left-0 right-0 h-16 justify-between flex items-center text-primary top-0 z-10 fixed bg-white shadow-lg transition-all duration-300 ease-in-out"
+        <header id="header" className="container flex h-16 max-w-screen-2xl items-center"
         // ref={headerRef}
         >
             <Logo />

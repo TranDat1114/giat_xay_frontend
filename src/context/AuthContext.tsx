@@ -25,7 +25,6 @@ interface AuthProviderProps {
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [accessToken, setAccessToken] = useState<string | null>(sessionStorage.getItem('accessToken'));
-
     //   const [refreshToken, setRefreshToken] = useState<string | null>(sessionStorage.getItem('refreshToken'));
     const navigate = useNavigate();
 
@@ -64,9 +63,9 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             axios.request(userInforConfig).then((response) => {
                 console.log(response.data);
-                sessionStorage.setItem('user-info', JSON.stringify(response.data));
+                localStorage.setItem('user-info', JSON.stringify(response.data));
                 if (response.data.role === 'Admin') {
-                    navigate('/dashboard');
+                    navigate('/dashboard-home');
                 } else {
                     navigate('/');
                 }
@@ -134,7 +133,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const logout = async () => {
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
-        sessionStorage.removeItem('user-info');
+        localStorage.removeItem('user-info');
         setAccessToken(null);
         navigate('/'); // Điều hướng sau khi đăng xuất
 

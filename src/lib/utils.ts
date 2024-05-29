@@ -36,13 +36,25 @@ export interface UserInfor {
   accessFailedCount: number;
 }
 
-
 export function getUser(): UserInfor {
-  const user = sessionStorage.getItem('user-info');
+  const user = localStorage.getItem('user-info');
 
   return JSON.parse(user || '{}');
-
 }
+
+export function formatDate(isoString: string): string {
+  const date = new Date(isoString);
+  const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+  };
+  return date.toLocaleDateString('vi-VN', options);
+}
+
 
 export const getFullImageUrl = (imagePath) => {
   // Kiểm tra xem URL có phải là URL tuyệt đối không

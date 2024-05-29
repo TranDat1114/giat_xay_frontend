@@ -8,7 +8,7 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { cn, isAdmin, isLoggedIn } from '@/lib/utils';
+import { cn, getUser, isAdmin, isLoggedIn } from '@/lib/utils';
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -18,10 +18,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { useSingleton } from "@/context/SingletonContext";
 
 const NavigationBar = () => {
-    const {laundryService} = useSingleton();
+    const { laundryService } = useSingleton();
+    const userInfor = getUser()
+
     const { logout } = useAuth();
     // const navigate = useNavigate();
     return (
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+
         <NavigationMenu>
             <NavigationMenuList>
                 <NavigationMenuItem>
@@ -37,21 +41,21 @@ const NavigationBar = () => {
                         <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
                             {laundryService.map((service) => (
                                 <li key={service.guid}>
-                                <NavigationMenuLink asChild>
-                                    <NavLink
-                                        to={`/orders-laundry/${service.guid}`}
-                                        className={cn(
-                                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                                          
-                                        )}
-                                    >
-                                        <div className="text-sm font-medium leading-none">{service.name}</div>
-                                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                        {service.description}
-                                        </p>
-                                    </NavLink>
-                                </NavigationMenuLink>
-                            </li>
+                                    <NavigationMenuLink asChild>
+                                        <NavLink
+                                            to={`/orders-laundry/${service.guid}`}
+                                            className={cn(
+                                                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+
+                                            )}
+                                        >
+                                            <div className="text-sm font-medium leading-none">{service.name}</div>
+                                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                                {service.description}
+                                            </p>
+                                        </NavLink>
+                                    </NavigationMenuLink>
+                                </li>
                             ))}
                         </ul>
                     </NavigationMenuContent>
@@ -81,7 +85,7 @@ const NavigationBar = () => {
                     isAdmin() == true ?
                         <NavigationMenuItem>
                             <p className={navigationMenuTriggerStyle()}>
-                                <NavLink to="/dashboard" className={({ isActive }) => isActive ? "active" : ""}>
+                                <NavLink to="/dashboard-home" className={({ isActive }) => isActive ? "active" : ""}>
                                     Dashboard
                                 </NavLink>
                             </p>
@@ -96,22 +100,21 @@ const NavigationBar = () => {
                                     <Button
                                         variant="outline"
                                         size="icon"
-                                        className="overflow-hidden rounded-full"
+                                        className="rounded-full"
                                     >
                                         <img
                                             src="https://pbs.twimg.com/profile_images/1787107492436258816/rlEsw_te_400x400.jpg"
                                             width={36}
                                             height={36}
                                             alt="Avatar"
-                                            className="overflow-hidden rounded-full"
+                                            className="rounded-full"
                                         />
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                <DropdownMenuContent>
+                                    <DropdownMenuLabel>{userInfor.email}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                                    <DropdownMenuItem>Support</DropdownMenuItem>
+                                    <DropdownMenuItem>Trang cá nhân</DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem>
                                         <Button
@@ -136,6 +139,7 @@ const NavigationBar = () => {
                 }
             </NavigationMenuList>
         </NavigationMenu>
+        </div>
     );
 }
 export default NavigationBar;
