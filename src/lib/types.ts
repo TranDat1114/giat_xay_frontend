@@ -2,7 +2,7 @@ interface LaundryService {
     guid: string,
     name: string,
     description: string,
-    imageUrl?: string,
+    imageUrl: string,
 }
 interface Image {
     url: string

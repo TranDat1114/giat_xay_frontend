@@ -1,16 +1,11 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
 export function getAccessToken() {
-  return sessionStorage.getItem('accessToken');
-}
-
-export function isLoggedIn() {
-  return getAccessToken() !== null;
+  return localStorage.getItem('accessToken');
 }
 
 export function isAdmin() {
@@ -61,7 +56,7 @@ export function formatVNDPrice(price: number): string {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 }
 
-export const getFullImageUrl = (imagePath) => {
+export const getFullImageUrl = (imagePath: string) => {
   // Kiểm tra xem URL có phải là URL tuyệt đối không
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;

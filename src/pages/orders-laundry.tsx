@@ -60,11 +60,14 @@ const OrderLaundryPage = () => {
 
 
 
-    const [laundryService, setLaundryService] = useState<LaundryService>({
-        guid: "",
-        name: "",
-        description: ""
-    });
+    const [laundryService, setLaundryService] = useState<LaundryService>(
+        {
+            guid: "",
+            name: "",
+            description: "",
+            imageUrl: "",
+        }
+    );
 
     useEffect(() => {
         const config = {
@@ -139,7 +142,7 @@ const OrderLaundryPage = () => {
                                     </FormItem>
                                 )}
                             />
-                             <FormField
+                            <FormField
                                 control={form.control}
                                 name="email"
                                 render={({ field }) => (

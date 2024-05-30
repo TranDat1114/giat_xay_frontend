@@ -24,8 +24,6 @@ const formSchema = z.object({
     path: ['confirmPassword'], // Đặt lỗi trên trường `confirmPassword`
 });
 
-
-
 const SignUpPage = () => {
     const { register } = useAuth();
     const form = useForm<z.infer<typeof formSchema>>({

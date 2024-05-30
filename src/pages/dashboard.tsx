@@ -55,8 +55,10 @@ import { useEffect, useState } from "react"
 import { formatDate, formatVNDPrice } from "@/lib/utils"
 import axios from "axios"
 import { toast } from "sonner"
+import { useAuth } from "@/context/AuthContext"
 
 const DashboardHomePage = () => {
+    const { accessToken } = useAuth()
     const [orders, setOrders] = useState<Order[]>([])
 
     useEffect(() => {
@@ -66,7 +68,7 @@ const DashboardHomePage = () => {
             url: `${import.meta.env.VITE_API_URL}/orders`,
             headers: {
                 'accept': '*/*',
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then((response) => {
@@ -77,7 +79,7 @@ const DashboardHomePage = () => {
                 console.log(error);
                 toast.error("Lỗi lấy dữ liệu đơn hàng")
             });
-    }, [])
+    }, [accessToken])
 
     return (
         <DashboardNav>
@@ -206,7 +208,7 @@ const DashboardHomePage = () => {
                                                             </div>
                                                         </TableCell>
                                                         <TableCell>
-                                                           <div className="hidden text-sm text-muted-foreground md:inline">
+                                                            <div className="hidden text-sm text-muted-foreground md:inline">
                                                                 {order.laundryServiceTypeGuid}
                                                             </div>
                                                         </TableCell>

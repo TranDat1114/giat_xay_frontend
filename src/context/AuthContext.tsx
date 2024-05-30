@@ -23,9 +23,15 @@ interface AuthProviderProps {
     children: ReactNode;
 }
 
+const isLogin = () => {
+    const value = localStorage.getItem('accessToken') !== null;
+    console.log(value);
+    return value;
+}
+
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [accessToken, setAccessToken] = useState<string | null>(sessionStorage.getItem('accessToken'));
-    //   const [refreshToken, setRefreshToken] = useState<string | null>(sessionStorage.getItem('refreshToken'));
+    const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem('accessToken'));
+    //   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem('refreshToken'));
     const navigate = useNavigate();
 
     const login = async (email: string, password: string) => {
@@ -45,8 +51,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         axios.request(loginConfig).then((response) => {
             console.log(response.data);
             const token = response.data.accessToken;
-            sessionStorage.setItem('accessToken', token);
-            sessionStorage.setItem("refreshToken", JSON.stringify(response.data.refreshToken))
+            localStorage.setItem('accessToken', token);
+            localStorage.setItem("refreshToken", response.data.refreshToken)
 
             setAccessToken(token);
 
@@ -130,9 +136,9 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
     }
 
-    const logout = async () => {
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
+    const logout = () => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         localStorage.removeItem('user-info');
         setAccessToken(null);
         navigate('/'); // Điều hướng sau khi đăng xuất
@@ -149,4 +155,4 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
 };
 
-export { AuthProvider, useAuth };
+export { AuthProvider, useAuth, isLogin };

@@ -25,6 +25,7 @@ import {
 
 import { useAuth } from '@/context/AuthContext';
 import { NavLink } from "react-router-dom"
+import { useState } from "react"
 const formSchema = z.object({
     email: z.string().email({
         message: "Email không hợp lệ"
@@ -35,6 +36,7 @@ const formSchema = z.object({
 });
 
 const SignInPage = () => {
+    const [loading, setLoading] = useState(false)
     const { login } = useAuth();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -45,7 +47,12 @@ const SignInPage = () => {
     })
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        login(values.email, values.password)
+        setLoading(true)
+        await login(values.email, values.password).then(() => {
+            console.log('Login success');
+        }).finally(() => {
+            setLoading(false)
+        })
     }
 
     return (
@@ -92,14 +99,14 @@ const SignInPage = () => {
                                 )}
                             />
 
-                            <Button type="submit" className="bg-primary text-white py-2 rounded-lg">Đăng nhập</Button>
+                            <Button disabled={loading} type="submit" className="bg-primary text-white py-2 rounded-lg">Đăng nhập</Button>
                         </form>
                     </Form>
                 </CardContent>
                 <CardFooter className="flex justify-between">
                     <p>Chưa có tài khoản</p>
                     <NavLink to="/signup">
-                    <Button variant="outline">Đăng ký ngay</Button>
+                        <Button variant="outline">Đăng ký ngay</Button>
                     </NavLink>
                 </CardFooter>
             </Card>
