@@ -9,32 +9,14 @@ interface Image {
     name: string
     groupType: string
 }
-interface Order {
-    orderId: number;
-    name: null;
-    email: null;
-    pickupAddress: string;
-    deliveryAddress: string;
-    phoneNumber: string;
-    note: string;
-    status: string;
-    laundryServiceGuid: string;
-    laundryService: null;
-    guid: string;
-    createdAt: string;
-    updatedAt: string;
-    isDeleted: boolean;
-    createdBy: string;
-    updatedBy: string;
-}
-export interface ApiResponse<T> {
+interface ApiResponse<T> {
     success: boolean;
     data: Data<T>;
     message: null;
     errors: null;
 }
 
-export interface Data<T> {
+interface Data<T> {
     result: T[];
     total: number;
     page: number;
@@ -42,4 +24,30 @@ export interface Data<T> {
     keyword: null;
 }
 
-export type { LaundryService, Image, Order }
+
+interface Order {
+    orderId: number;
+    userName: string;
+    email: string;
+    pickupAddress: string;
+    pickupDate: Date;
+    deliveryAddress: string;
+    deliveryDate: Date;
+    phoneNumber: string;
+    weight: number;
+    unit: string;
+    totalPrice: number;
+    note: string;
+    status: string;
+    description: string;
+    laundryServiceTypeGuid: string;
+    laundryServiceGuid: string;
+    guid: string;
+    createdAt: Date;
+    updatedAt: Date;
+    isDeleted: boolean;
+    createdBy: string;
+    updatedBy: string;
+}
+
+export type { LaundryService, Image, Order, ApiResponse, Data }

@@ -50,9 +50,9 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { DashboardNav } from "@/components/ui/dashboard-nav"
-import { Order } from "@/lib/types"
+import { ApiResponse, Order } from "@/lib/types"
 import { useEffect, useState } from "react"
-import { formatDate } from "@/lib/utils"
+import { formatDate, formatVNDPrice } from "@/lib/utils"
 import axios from "axios"
 import { toast } from "sonner"
 
@@ -60,7 +60,7 @@ const DashboardHomePage = () => {
     const [orders, setOrders] = useState<Order[]>([])
 
     useEffect(() => {
-        axios.request({
+        axios.request<ApiResponse<Order>>({
             method: 'get',
             maxBodyLength: Infinity,
             url: `${import.meta.env.VITE_API_URL}/orders`,
@@ -71,7 +71,7 @@ const DashboardHomePage = () => {
         })
             .then((response) => {
                 console.log(response.data)
-                setOrders(response.data)
+                setOrders(response.data.data.result)
             })
             .catch((error) => {
                 console.log(error);
@@ -200,12 +200,16 @@ const DashboardHomePage = () => {
                                                 orders.map((order, index) => (
                                                     <TableRow key={index} className="bg-accent">
                                                         <TableCell>
-                                                            <div className="font-medium">{order.name}</div>
+                                                            <div className="font-medium">{order.userName}</div>
                                                             <div className="hidden text-sm text-muted-foreground md:inline">
                                                                 {order.email}
                                                             </div>
                                                         </TableCell>
-                                                      
+                                                        <TableCell>
+                                                           <div className="hidden text-sm text-muted-foreground md:inline">
+                                                                {order.laundryServiceTypeGuid}
+                                                            </div>
+                                                        </TableCell>
                                                         <TableCell className="hidden sm:table-cell">
                                                             <Badge className="text-xs" variant="secondary">
                                                                 {order.status}
@@ -214,7 +218,9 @@ const DashboardHomePage = () => {
                                                         <TableCell className="hidden md:table-cell">
                                                             {formatDate(order.createdAt)}
                                                         </TableCell>
-                                                        <TableCell className="text-right">$250.00</TableCell>
+                                                        <TableCell className="text-right">
+                                                            {formatVNDPrice(order.totalPrice)}
+                                                        </TableCell>
                                                     </TableRow>
                                                 ))
                                             }

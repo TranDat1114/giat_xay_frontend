@@ -76,7 +76,7 @@ const AboutPage = () => {
             <div id="section-4" className="flex flex-col items-center p-32">
                 <h1 className="text-3xl font-light">Tại Sao Chọn Chúng Tôi</h1>
                 <div className="container grid grid-cols-3 justify-center gap-8 mt-8">
-                    <div className={`col-span-1 grid grid-rows-${halfReason} grid-flow-col gap-4`}>
+                    <div className={`col-span-1 grid grid-rows-${halfReason} grid-flow-row gap-4`}>
                         {
                             reasons.slice(0, halfReason).map((reason, index) => (
                                 <div key={index} className="col-span-1 row-span-1 grid grid-cols-12">
@@ -100,7 +100,7 @@ const AboutPage = () => {
                     <div className="col-span-1">
                         <img src="https://giatsaynhanh.vn/wp-content/uploads/2018/05/dich-vu-giat-giay-nhanh.png" alt="" />
                     </div>
-                    <div className={`col-span-1 grid grid-rows-${halfReason} grid-flow-col gap-4`}>
+                    <div className={`col-span-1 grid grid-rows-${halfReason} grid-flow-row gap-4`}>
                         {
                             reasons.slice(halfReason).map((reason, index) => (
                                 <div key={index} className="col-span-1 grid grid-cols-12">

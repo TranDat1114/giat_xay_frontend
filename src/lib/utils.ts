@@ -42,19 +42,24 @@ export function getUser(): UserInfor {
   return JSON.parse(user || '{}');
 }
 
-export function formatDate(isoString: string): string {
-  const date = new Date(isoString);
+export function formatDate(dateTime: Date): string {
+
+  const date = new Date(dateTime);
+
   const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
   };
   return date.toLocaleDateString('vi-VN', options);
 }
 
+export function formatVNDPrice(price: number): string {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+}
 
 export const getFullImageUrl = (imagePath) => {
   // Kiểm tra xem URL có phải là URL tuyệt đối không
