@@ -1,43 +1,47 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { jwtDecode } from "jwt-decode";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function getAccessToken() {
-  return localStorage.getItem('accessToken');
-}
-
 export function isAdmin() {
-  return getUser().role === 'Admin';
+  return getUser().role.includes('Admin');
 }
 
-export interface UserInfor {
-  role: string;
-  id: string;
-  userName: string;
-  normalizedUserName: string;
+export interface jwtDecode {
+  unique_name: string;
   email: string;
-  normalizedEmail: string;
-  emailConfirmed: boolean;
-  passwordHash: string;
-  securityStamp: string;
-  concurrencyStamp: string;
-  phoneNumber: string;
-  phoneNumberConfirmed: boolean;
-  twoFactorEnabled: boolean;
-  lockoutEnd: null;
-  lockoutEnabled: boolean;
-  accessFailedCount: number;
+  nameid: string;
+  role: string[];
+  nbf: number;
+  exp: number;
+  iat: number;
+  iss: string;
+  aud: string;
 }
 
-export function getUser(): UserInfor {
-  const user = localStorage.getItem('user-info');
 
-  return JSON.parse(user || '{}');
+export function getUser(): jwtDecode {
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    return {
+      unique_name: '',
+      email: '',
+      nameid: '',
+      role: [],
+      nbf: 0,
+      exp: 0,
+      iat: 0,
+      iss: '',
+      aud: ''
+    };
+  }
+  const decodedToken = jwtDecode(token) as jwtDecode;
+  return decodedToken;
 }
 
-export function formatDate(dateTime: Date): string {
+export function formatDateTime(dateTime: Date): string {
 
   const date = new Date(dateTime);
 
@@ -52,8 +56,21 @@ export function formatDate(dateTime: Date): string {
   return date.toLocaleDateString('vi-VN', options);
 }
 
-export function formatVNDPrice(price: number): string {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+export function formatDate(dateTime: Date): string {
+
+  const date = new Date(dateTime);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+  return date.toLocaleDateString('vi-VN', options);
+}
+
+export function formatVNDPrice(price: number | string): string {
+  const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(numericPrice);
 }
 
 export const getFullImageUrl = (imagePath: string) => {

@@ -1,3 +1,4 @@
+
 interface LaundryService {
     guid: string,
     name: string,
@@ -11,17 +12,16 @@ interface Image {
 }
 interface ApiResponse<T> {
     success: boolean;
-    data: Data<T>;
-    message: null;
+    result: Result<T> | null;
+    message: string;
     errors: null;
 }
 
-interface Data<T> {
-    result: T[];
+interface Result<T> {
+    data: T[];
     total: number;
     page: number;
     pageSize: number;
-    keyword: null;
 }
 
 
@@ -29,9 +29,7 @@ interface Order {
     orderId: number;
     userName: string;
     email: string;
-    pickupAddress: string;
-    pickupDate: Date;
-    deliveryAddress: string;
+    address: string;
     deliveryDate: Date;
     phoneNumber: string;
     weight: number;
@@ -39,9 +37,10 @@ interface Order {
     totalPrice: number;
     note: string;
     status: string;
-    description: string;
     laundryServiceTypeGuid: string;
     laundryServiceGuid: string;
+    laundryServiceTypeDescription: string;
+    laundryServiceName: string;
     guid: string;
     createdAt: Date;
     updatedAt: Date;
@@ -50,4 +49,16 @@ interface Order {
     updatedBy: string;
 }
 
-export type { LaundryService, Image, Order, ApiResponse, Data }
+interface InCome {
+    totalIncome: number;
+    totalIncomeThisWeek: number;
+    totalIncomeThisMonth: number;
+    totalIncomeThisYear: number;
+    totalOrders: number;
+    totalOrdersThisWeek: number;
+    totalOrdersThisMonth: number;
+    totalOrdersThisYear: number;
+}
+
+
+export type { LaundryService, Image, Order, ApiResponse, Result, InCome }

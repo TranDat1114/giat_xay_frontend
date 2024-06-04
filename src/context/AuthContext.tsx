@@ -3,11 +3,12 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from "sonner"
+import { isAdmin } from '@/lib/utils';
 interface AuthContextType {
     accessToken: string | null;
     login: (email: string, password: string) => Promise<void>;
     logout: () => void;
-    register: (email: string, password: string) => Promise<void>;
+    register: (userName: string, email: string, password: string) => Promise<void>;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -25,7 +26,6 @@ interface AuthProviderProps {
 
 const isLogin = () => {
     const value = localStorage.getItem('accessToken') !== null;
-    console.log(value);
     return value;
 }
 
@@ -52,33 +52,13 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.log(response.data);
             const token = response.data.accessToken;
             localStorage.setItem('accessToken', token);
-            localStorage.setItem("refreshToken", response.data.refreshToken)
 
             setAccessToken(token);
-
-            const userInforConfig = {
-                method: 'get',
-                maxBodyLength: Infinity,
-                url: `${import.meta.env.VITE_API_URL}/auth/users/me`,
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+            if (isAdmin()) {
+                navigate('/dashboard-home');
+            } else {
+                navigate('/');
             }
-
-            axios.request(userInforConfig).then((response) => {
-                console.log(response.data);
-                localStorage.setItem('user-info', JSON.stringify(response.data));
-                if (response.data.role === 'Admin') {
-                    navigate('/dashboard-home');
-                } else {
-                    navigate('/');
-                }
-            }).catch((error) => {
-                console.log(error);
-                navigate('/'); // Điều hướng đến trang dashboard sau khi đăng nhập thành công
-            })
 
             toast.success("Đăng nhập thành công", {
                 description: "Chào mừng bạn quay trở lại"
@@ -97,7 +77,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
     };
 
-    const register = async (email: string, password: string) => {
+    const register = async (userName: string, email: string, password: string) => {
         const config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -107,6 +87,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 'Content-Type': 'application/json'
             },
             data: JSON.stringify({
+                userName: userName,
                 email: email,
                 password: password
             }),

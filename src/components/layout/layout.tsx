@@ -13,7 +13,7 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="sticky top-0 z-50 w-full border-b border-border/40 bg-background backdrop-blur">
                 <Header />
             </div>
-            <main className="my-2 min-h-svh pt-4">{children}</main> {/* Main content */}
+            <main className="min-h-svh pt-4">{children}</main> {/* Main content */}
             <footer>
                 <Footer />
             </footer>
