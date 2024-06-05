@@ -130,7 +130,7 @@ const OrderLaundryPage = () => {
             });
         }
         else {
-            if (values.listLaundryServicesType.length === 0 || values.listLaundryServicesType === undefined) {
+            if (values.listLaundryServicesType == undefined || values.listLaundryServicesType.length === 0) {
                 toast.error("Vui lòng chọn ít nhất một dịch vụ")
                 return
             } else {
