@@ -50,7 +50,6 @@ interface Result<T> {
 
 
 interface Order {
-    orderId: number;
     userName: string;
     email: string;
     address: string;

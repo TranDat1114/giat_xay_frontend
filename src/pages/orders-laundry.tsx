@@ -37,18 +37,14 @@ import { Separator } from "@/components/ui/separator"
 import { useSingleton } from "@/context/SingletonContext"
 import { formatVNDPrice, formatUnit, getUser } from "@/lib/utils"
 import { useAuth } from "@/context/AuthContext"
-
+import { v4 as uuidv4 } from 'uuid';
 const laundryServiceSchema = z.object({
-    guid: z.string().min(1,
-        {
-            message: "Dịch vụ cần phải chọn"
-        }
-    ),
+    guid: z.string().optional(),
     quantity: z.number(
         {
             message: "Số lượng cần phải là số nguyên dương"
         }
-    ).int().positive()
+    ).int().positive().optional()
 })
 
 const formSchema = z.object({
@@ -59,7 +55,7 @@ const formSchema = z.object({
         message: "Địa chỉ cần phải nhập"
     }),
     note: z.string().optional(),
-    listLaundryServicesType: z.array(laundryServiceSchema)
+    listLaundryServicesType: z.array(laundryServiceSchema).optional()
 });
 
 const OrderLaundryPage = () => {
@@ -107,17 +103,20 @@ const OrderLaundryPage = () => {
         const currentDay = new Date()
         const tomorrow = new Date(currentDay)
         tomorrow.setDate(currentDay.getDate() + 1)
-        if (values.listLaundryServicesType.length === 0) {
-
+        if (laundryServices.name != "Giặt Hấp Chất lượng cao") {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { listLaundryServicesType, ...requestValues } = values
+            const emptyGuid: string = uuidv4();
             axios.request(
                 {
                     ...config,
                     data: {
-                        ...values,
-                        laundryServiceTypeGuid: guid,
+                        ...requestValues,
+                        laundryServiceGuid: guid,
                         deliveryDate: tomorrow,
                         email: user.email,
                         userName: user.unique_name,
+                        laundryServiceTypeGuid: emptyGuid.toString(),
                     }
                 }
             ).then((response) => {
@@ -127,38 +126,46 @@ const OrderLaundryPage = () => {
             }).catch((error) => {
                 console.log(error);
                 toast.error("Đặt hàng thất bại")
+                console.log("No service")
             });
         }
         else {
-            values.listLaundryServicesType.map((service) => {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const { listLaundryServicesType, ...requestValues } = values
+            if (values.listLaundryServicesType.length === 0 || values.listLaundryServicesType === undefined) {
+                toast.error("Vui lòng chọn ít nhất một dịch vụ")
+                return
+            } else {
+                values.listLaundryServicesType.map((service) => {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const { listLaundryServicesType, ...requestValues } = values
 
-                axios.request(
-                    {
-                        ...config,
-                        data: {
-                            ...requestValues,
-                            laundryServiceGuid: guid,
-                            value: service.quantity,
-                            laundryServiceTypeGuid: service.guid,
-                            deliveryDate: tomorrow,
-                            email: user.email,
-                            userName: user.unique_name,
-                            unit: "Bộ",
+                    axios.request(
+                        {
+                            ...config,
+                            data: {
+                                ...requestValues,
+                                laundryServiceGuid: guid,
+                                value: service.quantity,
+                                laundryServiceTypeGuid: service.guid,
+                                deliveryDate: tomorrow,
+                                email: user.email,
+                                userName: user.unique_name,
+                                unit: "Bộ",
+                            }
                         }
-                    }
-                )
-                    .then((response) => {
-                        toast.success("Đặt hàng thành công")
-                        console.log(response.data)
-                        navigate("/complete-orders-laundry")
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        toast.error("Đặt hàng thất bại")
-                    });
-            })
+                    )
+                        .then((response) => {
+                            toast.success("Đặt hàng thành công")
+                            console.log(response.data)
+                            navigate("/complete-orders-laundry")
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            toast.error("Đặt hàng thất bại")
+                            console.log("No")
+                        });
+                })
+            }
+
         }
     }
 

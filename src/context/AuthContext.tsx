@@ -119,8 +119,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user-info');
         setAccessToken(null);
         navigate('/'); // Điều hướng sau khi đăng xuất
 

@@ -25,8 +25,12 @@ interface SingleProviderProps {
     children: ReactNode;
 }
 const SingletonProvider: React.FC<SingleProviderProps> = ({ children }) => {
-    const [laundryService, setLaundryService] = useState<LaundryService[]>([]);
-    const [bannerList, setBannerList] = useState<Image[]>([]);
+    const [laundryService, setLaundryService] = useState<LaundryService[]>(
+        JSON.parse(localStorage.getItem('laundryService') || '[]')
+    );
+    const [bannerList, setBannerList] = useState<Image[]>(
+        JSON.parse(localStorage.getItem('bannerList') || '[]')
+    );
 
     useEffect(() => {
         axios.request({
@@ -39,7 +43,7 @@ const SingletonProvider: React.FC<SingleProviderProps> = ({ children }) => {
             },
         }).then((response) => {
             setLaundryService(response.data)
-
+            localStorage.setItem('laundryService', JSON.stringify(response.data))
         }).catch((error) => {
             console.log(error);
         });
@@ -54,13 +58,13 @@ const SingletonProvider: React.FC<SingleProviderProps> = ({ children }) => {
             },
         }).then((response) => {
             setBannerList(response.data)
-
+            localStorage.setItem('bannerList', JSON.stringify(response.data))
         }).catch((error) => {
             console.log(error);
         });
     }, []);
     return (
-        <SingletonContext.Provider value={{ laundryService, setLaundryService, bannerList,setBannerList }}>
+        <SingletonContext.Provider value={{ laundryService, setLaundryService, bannerList, setBannerList }}>
             {children}
         </SingletonContext.Provider>
     );
