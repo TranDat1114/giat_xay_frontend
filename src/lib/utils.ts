@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { jwtDecode } from "jwt-decode";
+import { Unit } from "@/lib/enums";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -39,6 +40,19 @@ export function getUser(): jwtDecode {
   }
   const decodedToken = jwtDecode(token) as jwtDecode;
   return decodedToken;
+}
+
+export function formatUnit(unit: Unit): string {
+  switch (unit) {
+      case Unit.Weight:
+          return 'Kg';
+      case Unit.Unit:
+          return 'Bộ';
+      case Unit.Time:
+          return 'Lần';
+      default:
+          return '';
+  }
 }
 
 export function formatDateTime(dateTime: Date): string {

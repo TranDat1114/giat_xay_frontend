@@ -74,7 +74,7 @@ const HomePage = () => {
                                 Giặt quần áo
                             </p>
                             <p className="text-wrap">
-                                Nhân viên cửa hàng giặt sấy tự động GiatSayNhanh.vn sẽ có mặt ngay thời điểm được hẹn để tiếp nhận hàng hóa một cách chuyên nghiệp nhất.
+                                Nhân viên cửa hàng giặt sấy tự động GiatXayNhanh.vn sẽ có mặt ngay thời điểm được hẹn để tiếp nhận hàng hóa một cách chuyên nghiệp nhất.
                             </p>
                         </div>
                     </div>
@@ -90,7 +90,7 @@ const HomePage = () => {
                                 Nhận hàng
                             </p>
                             <p className="text-wrap">
-                                Nhân viên cửa hàng giặt sấy tự động GiatSayNhanh.vn sẽ có mặt ngay thời điểm được hẹn để tiếp nhận hàng hóa một cách chuyên nghiệp nhất.
+                                Nhân viên cửa hàng giặt sấy tự động GiatXayNhanh.vn sẽ có mặt ngay thời điểm được hẹn để tiếp nhận hàng hóa một cách chuyên nghiệp nhất.
                             </p>
                         </div>
                     </div>

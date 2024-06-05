@@ -36,7 +36,11 @@ const NavigationBar = () => {
                         </p>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger>Dịch vụ</NavigationMenuTrigger>
+                        <NavigationMenuTrigger>
+                            <NavLink to="/orders-laundry" className={({ isActive }) => isActive ? "active" : ""}>
+                                Dịch vụ
+                            </NavLink>
+                        </NavigationMenuTrigger>
                         <NavigationMenuContent>
                             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
                                 {laundryService.map((service) => (

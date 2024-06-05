@@ -12,6 +12,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import OrdersLaundryPage from '@/pages/orders-laundry';
 import CompleteOrdersLaundryPage from '@/pages/complete-orders-laundry';
 import { SingletonProvider } from '@/context/SingletonContext';
+import ListLaundryServicesPage from '@/pages/list-laundry-services';
 import ContactPage from '@/pages/contact';
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
@@ -35,7 +36,7 @@ function App() {
                 <Route path="/signin" element={isLogin() ? <Navigate to="/" /> : <SignInPage />} />
                 <Route path="/dashboard-home" element={<PrivateRoute><DashboardHomePage /></PrivateRoute>} />
                 <Route path="/dashboard-order" element={<PrivateRoute><DashboardOrderPage /></PrivateRoute>} />
-
+                <Route path="/orders-laundry" element={<ListLaundryServicesPage />} />
                 <Route path="/orders-laundry/:guid" element={<OrdersLaundryPage />} />
 
                 <Route path="/complete-orders-laundry" element={<CompleteOrdersLaundryPage />} />

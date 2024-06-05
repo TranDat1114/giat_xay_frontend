@@ -33,7 +33,7 @@ import {
     PaginationContent,
     PaginationItem,
 } from "@/components/ui/pagination"
-import { Progress } from "@/components/ui/progress"
+// import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import {
     Table,
@@ -60,7 +60,7 @@ import { useAuth } from "@/context/AuthContext"
 const DashboardHomePage = () => {
     const { accessToken } = useAuth()
     const [orders, setOrders] = useState<Order[]>([])
-    const [order, setOrder] = useState<number>(0)
+    const [orderIndex, setOrderIndex] = useState<number>(0)
     const [income, setIncome] = useState<InCome>(
         {
             totalIncomeThisWeek: 0,
@@ -74,10 +74,11 @@ const DashboardHomePage = () => {
         }
     )
     const changeOrder = (index: number) => {
-        if (index === order) {
+        if (index === orderIndex) {
             return
         }
-        setOrder(index)
+        console.log(index)
+        setOrderIndex(index)
     }
 
     useEffect(() => {
@@ -144,7 +145,7 @@ const DashboardHomePage = () => {
                                 </div>
                             </CardContent>
                             <CardFooter>
-                                <Progress value={25} aria-label="25% increase" />
+                                {/* <Progress value={25} aria-label="25% increase" /> */}
                             </CardFooter>
                         </Card>
                         <Card x-chunk="dashboard-05-chunk-2">
@@ -158,7 +159,7 @@ const DashboardHomePage = () => {
                                 </div>
                             </CardContent>
                             <CardFooter>
-                                <Progress value={12} aria-label="12% increase" />
+                                {/* <Progress value={12} aria-label="12% increase" /> */}
                             </CardFooter>
                         </Card>
                     </div>
@@ -233,8 +234,8 @@ const DashboardHomePage = () => {
                                         <TableBody>
                                             {
                                                 orders.map((order, index) => (
-                                                    <TableRow key={index} className="bg-accent"
-                                                    onAbort={() => changeOrder(index)}
+                                                    <TableRow key={index} className={`cursor-pointer`}
+                                                        onClick={() => changeOrder(index)}
                                                     >
                                                         <TableCell>
                                                             <div className="font-medium">{order.userName}</div>
@@ -284,7 +285,7 @@ const DashboardHomePage = () => {
                                 <CardHeader className="flex flex-row items-start bg-muted/50">
                                     <div className="grid gap-0.5">
                                         <CardTitle className="group flex items-center gap-2 text-lg">
-                                            Mã đơn hàng: {orders[order].orderId}
+                                            Mã đơn hàng: {orders[orderIndex].orderId}
                                             <Button
                                                 size="icon"
                                                 variant="outline"
@@ -293,7 +294,7 @@ const DashboardHomePage = () => {
                                                 <Copy className="h-3 w-3" />
                                                 <span className="sr-only" onClick={
                                                     () => {
-                                                        const copyText = orders[order].orderId.toString()
+                                                        const copyText = orders[orderIndex].orderId.toString()
                                                         navigator.clipboard.writeText(
                                                             copyText
                                                         ).then(() => {
@@ -306,7 +307,7 @@ const DashboardHomePage = () => {
                                                 }>Sao chép mã đơn hàng</span>
                                             </Button>
                                         </CardTitle>
-                                        <CardDescription>Ngày tạo: {formatDate(orders[order].createdAt)}</CardDescription>
+                                        <CardDescription>Ngày tạo: {formatDate(orders[orderIndex].createdAt)}</CardDescription>
                                     </div>
                                     <div className="ml-auto flex items-center gap-1">
                                         <Button size="sm" variant="outline" className="h-8 gap-1">
@@ -337,9 +338,9 @@ const DashboardHomePage = () => {
                                         <ul className="grid gap-3">
                                             <li className="flex items-center justify-between">
                                                 <span className="text-muted-foreground">
-                                                    {orders[order].laundryServiceName}({orders[order].laundryServiceTypeDescription}) x <span>{orders[order].weight} {orders[order].unit}</span>
+                                                    {orders[orderIndex].laundryServiceName}({orders[orderIndex].laundryServiceTypeDescription}) x <span>{orders[orderIndex].value} {orders[orderIndex].unit}</span>
                                                 </span>
-                                                <span>                                                            {formatVNDPrice(orders[order].totalPrice)}
+                                                <span>                                                            {formatVNDPrice(orders[orderIndex].totalPrice)}
                                                 </span>
                                             </li>
                                         </ul>
@@ -359,7 +360,7 @@ const DashboardHomePage = () => {
                                             </li> */}
                                             <li className="flex items-center justify-between font-semibold">
                                                 <span className="text-muted-foreground">Tổng tiền</span>
-                                                <span>                                                        {formatVNDPrice(orders[order].totalPrice)}
+                                                <span>                                                        {formatVNDPrice(orders[orderIndex].totalPrice)}
                                                 </span>
                                             </li>
                                         </ul>
@@ -369,7 +370,7 @@ const DashboardHomePage = () => {
                                         <div className="grid gap-3">
                                             <div className="font-semibold">Địa chỉ nhận đồ giặt</div>
                                             <address className="grid gap-0.5 not-italic text-muted-foreground">
-                                                <div>{orders[order].address}</div>
+                                                <div>{orders[orderIndex].address}</div>
                                                 {/* <div>{orders[order].city}</div>
                                                 <div>{orders[order].country}</div> */}
                                             </address>
@@ -388,19 +389,19 @@ const DashboardHomePage = () => {
                                             <div className="flex items-center justify-between">
                                                 <dt className="text-muted-foreground">Khách hàng</dt>
                                                 <dd>
-                                                    {orders[order].userName}
+                                                    {orders[orderIndex].userName}
                                                 </dd>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <dt className="text-muted-foreground">Email</dt>
                                                 <dd>
-                                                    <a href="mailto:">{orders[order].email}</a>
+                                                    <a href="mailto:">{orders[orderIndex].email}</a>
                                                 </dd>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <dt className="text-muted-foreground">Phone</dt>
                                                 <dd>
-                                                    <a href="tel:">{orders[order].phoneNumber}</a>
+                                                    <a href="tel:">{orders[orderIndex].phoneNumber}</a>
                                                 </dd>
                                             </div>
                                         </dl>
@@ -453,8 +454,9 @@ const DashboardHomePage = () => {
 
 const DashboardOrderPage = () => {
     return (
-        <>
-        </>
+        <main>
+
+        </main>
     )
 };
 

@@ -1,10 +1,34 @@
 
 interface LaundryService {
-    guid: string,
-    name: string,
-    description: string,
-    imageUrl: string,
+    name: string;
+    description: string;
+    imageUrl: string;
+    laundryServiceTypes: LaundryServiceType[];
+    guid: string;
+    createdAt: Date;
+    updatedAt: Date;
+    isDeleted: boolean;
+    createdBy: string;
+    updatedBy: string;
 }
+
+interface LaundryServiceType {
+    price: number;
+    unitValue: number;
+    conditionValue: number;
+    conditionType: number;
+    unitType: number;
+    description: string;
+    laundryServiceGuid: string;
+    laundryService: null;
+    guid: string;
+    createdAt: Date;
+    updatedAt: Date;
+    isDeleted: boolean;
+    createdBy: string;
+    updatedBy: string;
+}
+
 interface Image {
     url: string
     name: string
@@ -32,7 +56,7 @@ interface Order {
     address: string;
     deliveryDate: Date;
     phoneNumber: string;
-    weight: number;
+    value: number;
     unit: string;
     totalPrice: number;
     note: string;
@@ -61,4 +85,4 @@ interface InCome {
 }
 
 
-export type { LaundryService, Image, Order, ApiResponse, Result, InCome }
+export type { LaundryService, Image, Order, ApiResponse, Result, InCome, LaundryServiceType }
