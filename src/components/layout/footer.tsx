@@ -10,13 +10,13 @@ const Footer = () => {
             </nav>
             <nav>
                 <div className="grid grid-flow-col gap-4">
-                    <a>
+                    <a href="https://www.facebook.com/giangit15" target="_blank">
                         <Facebook />
                     </a>
-                    <a>
+                    <a href="https://www.instagram.com/yangg_it01" target="_blank">
                         <Instagram />
                     </a>
-                    <a>
+                    <a href="https://github.com/yangsadboi" target="_blank">
                         <Github />
                     </a>
                 </div>

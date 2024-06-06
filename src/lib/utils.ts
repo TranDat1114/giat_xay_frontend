@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function isAdmin() {
+
   return getUser().role.includes('Admin');
 }
 
@@ -22,6 +23,25 @@ export interface jwtDecode {
   aud: string;
 }
 
+export function isTokenExpired(token: string) {
+  try {
+    const decodedToken = jwtDecode(token);
+    const currentTime = Math.floor(Date.now() / 1000); // Thời gian hiện tại tính bằng giây
+
+    // Kiểm tra thời gian hết hạn
+    if (!decodedToken.exp) {
+      return true; // Token không có thời gian hết hạn
+    }
+
+    if (decodedToken.exp < currentTime) {
+      return true; // Token đã hết hạn
+    } else {
+      return false; // Token vẫn còn hiệu lực
+    }
+  } catch (error) {
+    return true; // Token không hợp lệ hoặc không thể giải mã
+  }
+}
 
 export function getUser(): jwtDecode {
   const token = localStorage.getItem('accessToken');
@@ -44,14 +64,14 @@ export function getUser(): jwtDecode {
 
 export function formatUnit(unit: Unit): string {
   switch (unit) {
-      case Unit.Weight:
-          return 'Kg';
-      case Unit.Unit:
-          return 'Bộ';
-      case Unit.Time:
-          return 'Lần';
-      default:
-          return '';
+    case Unit.Weight:
+      return 'Kg';
+    case Unit.Unit:
+      return 'Bộ';
+    case Unit.Time:
+      return 'Lần';
+    default:
+      return '';
   }
 }
 

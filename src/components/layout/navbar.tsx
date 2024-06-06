@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/navigation-menu"
 import { cn, getUser, isAdmin } from '@/lib/utils';
 import { NavLink } from "react-router-dom";
-import { isLogin, useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -21,11 +21,10 @@ const NavigationBar = () => {
     const { laundryService } = useSingleton();
     const userInfor = getUser()
 
-    const { logout } = useAuth();
+    const { logout, isLogin } = useAuth();
     // const navigate = useNavigate();
     return (
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>

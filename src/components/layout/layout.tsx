@@ -13,12 +13,12 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="sticky top-0 z-50 w-full border-b border-border/40 bg-background backdrop-blur">
                 <Header />
             </div>
-            <main className="min-h-svh pt-4">{children}</main> {/* Main content */}
+            <main className="min-h-svh">{children}</main> {/* Main content */}
             <footer>
                 <Footer />
             </footer>
 
-            <Button variant={"outline"} size={ "icon"} onClick={() => window.scrollTo(0, 0)} className="rounded-full fixed bottom-4 right-4 ">
+            <Button variant={"outline"} size={"icon"} onClick={() => window.scrollTo(0, 0)} className="rounded-full fixed bottom-4 right-4 ">
                 <ChevronUp size={32} />
             </Button>
 

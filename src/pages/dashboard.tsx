@@ -1,12 +1,12 @@
 import {
     ChevronLeft,
     ChevronRight,
+    ChevronsUpDown,
     Copy,
     // CreditCard,
     File,
     ListFilter,
-    MoreVertical,
-    Truck,
+    MoreVertical
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -21,10 +21,8 @@ import {
 } from "@/components/ui/card"
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -49,15 +47,62 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-import { DashboardNav } from "@/components/ui/dashboard-nav"
 import { ApiResponse, Order, InCome } from "@/lib/types"
 import { useEffect, useState } from "react"
 import { formatDate, formatVNDPrice } from "@/lib/utils"
 import axios from "axios"
 import { toast } from "sonner"
 import { useAuth } from "@/context/AuthContext"
+import { DashboardNav } from "@/components/ui/dashboard-nav"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-const DashboardHomePage = () => {
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { OrderStatus } from "@/lib/enums"
+import { Form, FormControl, FormItem, FormField } from "@/components/ui/form"
+const FormSchema = z.object({
+    guid: z.string(),
+    status: z.string(),
+})
+const DashboardOrderPage = () => {
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            guid: "",
+            status: ""
+        }
+    })
+
+    function onSubmit(values: z.infer<typeof FormSchema>) {
+        console.log(values)
+        orders[orderIndex].status = values.status
+        toast.success("Cập nhật trạng thái đơn hàng thành công")
+
+        const config = {
+            method: 'put',
+            maxBodyLength: Infinity,
+            url: `${import.meta.env.VITE_API_URL}/orders/${orders[orderIndex].guid}/status?status=${values.status}`,
+            headers: {
+                'accept': '*/*',
+                'Authorization': 'Bearer ' + accessToken
+            }
+        };
+        axios.request(config)
+            .then((response) => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     const { accessToken } = useAuth()
     const [orders, setOrders] = useState<Order[]>([])
     const [orderIndex, setOrderIndex] = useState<number>(0)
@@ -77,9 +122,29 @@ const DashboardHomePage = () => {
         if (index === orderIndex) {
             return
         }
+        form.setValue('guid', orders[index].guid)
+        form.setValue('status', orders[index].status)
         console.log(index)
         setOrderIndex(index)
     }
+
+    const prevOrder = () => {
+        if (orderIndex === 0) {
+            return
+        }
+        form.setValue('guid', orders[orderIndex - 1].guid)
+        form.setValue('status', orders[orderIndex - 1].status)
+        setOrderIndex(orderIndex - 1)
+    }
+    const nextOrder = () => {
+        if (orderIndex === orders.length - 1) {
+            return
+        }
+        form.setValue('guid', orders[orderIndex + 1].guid)
+        form.setValue('status', orders[orderIndex + 1].status)
+        setOrderIndex(orderIndex + 1)
+    }
+
 
     useEffect(() => {
         axios.request<ApiResponse<Order>>({
@@ -94,6 +159,7 @@ const DashboardHomePage = () => {
             .then((response) => {
                 console.log(response.data)
                 setOrders(response.data.result?.data || [])
+                // setFilteredOrders(response.data.result?.data || [])
             })
             .catch((error) => {
                 console.log(error);
@@ -114,6 +180,20 @@ const DashboardHomePage = () => {
             toast.error("Lỗi lấy dữ liệu thu nhập")
         })
     }, [accessToken])
+
+
+    const sortfilteredOrdersA = (key: string) => {
+        const sorted = [...orders].sort((a, b) => {
+            if (a[key] < b[key]) {
+                return -1;
+            }
+            if (a[key] > b[key]) {
+                return 1;
+            }
+            return 0;
+        });
+        setOrders(sorted)
+    }
 
 
     return (
@@ -179,22 +259,10 @@ const DashboardHomePage = () => {
                                             className="h-7 gap-1 text-sm"
                                         >
                                             <ListFilter className="h-3.5 w-3.5" />
-                                            <span className="sr-only sm:not-sr-only">Filter</span>
+                                            <span className="sr-only sm:not-sr-only">Sắp xếp</span>
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuCheckboxItem checked>
-                                            Fulfilled
-                                        </DropdownMenuCheckboxItem>
-                                        <DropdownMenuCheckboxItem>
-                                            Declined
-                                        </DropdownMenuCheckboxItem>
-                                        <DropdownMenuCheckboxItem>
-                                            Refunded
-                                        </DropdownMenuCheckboxItem>
-                                    </DropdownMenuContent>
+                                    
                                 </DropdownMenu>
                                 <Button
                                     size="sm"
@@ -218,17 +286,66 @@ const DashboardHomePage = () => {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead>Khách hàng</TableHead>
-                                                <TableHead className="hidden sm:table-cell">
-                                                    Loại dịch vụ
+                                                <TableHead>
+                                                <Button variant="outline" size="sm" className="flex justify-between gap-x-2 items-center"
+                                                        onClick={() => {
+                                                            sortfilteredOrdersA("laundryServiceName")
+                                                        }}
+                                                    >
+                                                        <p>
+                                                            Khách hàng
+                                                        </p>
+                                                        <ChevronsUpDown className="h-4 w-4" />
+                                                    </Button>
                                                 </TableHead>
                                                 <TableHead className="hidden sm:table-cell">
-                                                    Trạng thái
+                                                    <Button variant="outline" size="sm" className="flex justify-between gap-x-2 items-center"
+                                                        onClick={() => {
+                                                            sortfilteredOrdersA("laundryServiceName")
+                                                        }}
+                                                    >
+                                                        <p>
+                                                            Loại dịch vụ
+                                                        </p>
+                                                        <ChevronsUpDown className="h-4 w-4" />
+                                                    </Button>
+                                                </TableHead>
+                                                <TableHead className="hidden sm:table-cell">
+                                                    <Button variant="outline" size="sm" className="flex justify-between gap-x-2 items-center"
+                                                        onClick={() => {
+                                                            sortfilteredOrdersA("status")
+                                                        }}
+                                                    >
+                                                        <p>
+                                                            Trạng thái
+                                                        </p>
+                                                        <ChevronsUpDown className="h-4 w-4" />
+                                                    </Button>
                                                 </TableHead>
                                                 <TableHead className="hidden md:table-cell">
-                                                    Ngày tạo
+                                                    <Button variant="outline" size="sm" className="flex justify-between gap-x-2 items-center"
+                                                        onClick={() => {
+                                                            sortfilteredOrdersA("createdAt")
+                                                        }}
+                                                    >
+                                                        <p>
+                                                            Ngày tạo
+                                                        </p>
+                                                        <ChevronsUpDown className="h-4 w-4" />
+                                                    </Button>
                                                 </TableHead>
-                                                <TableHead className="text-right">Tổng tiền</TableHead>
+                                                <TableHead className="text-right">
+                                                    <Button variant="outline" size="sm" className="flex justify-between gap-x-2 items-center"
+                                                        onClick={() => {
+                                                            sortfilteredOrdersA("totalPrice")
+                                                        }}
+                                                    >
+                                                        <p>
+                                                            Tổng tiền
+                                                        </p>
+                                                        <ChevronsUpDown className="h-4 w-4" />
+                                                    </Button>
+                                                </TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -256,9 +373,15 @@ const DashboardHomePage = () => {
                                                             </div>
                                                         </TableCell>
                                                         <TableCell className="hidden sm:table-cell">
-                                                            <Badge className="text-xs" variant="secondary">
-                                                                {order.status}
-                                                            </Badge>
+                                                            {
+                                                                order.status === "Done" ? <Badge className="text-xs" variant="default">
+                                                                    {order.status}
+                                                                </Badge> : order.status === "Cancelled" ? <Badge className="text-xs " variant="destructive">
+                                                                    {order.status}
+                                                                </Badge> : <Badge className="text-xs bg-warning" >
+                                                                    {order.status}
+                                                                </Badge>
+                                                            }
                                                         </TableCell>
                                                         <TableCell className="hidden md:table-cell">
                                                             {formatDate(order.createdAt)}
@@ -285,16 +408,12 @@ const DashboardHomePage = () => {
                                 <CardHeader className="flex flex-row items-start bg-muted/50">
                                     <div className="grid gap-0.5">
                                         <CardTitle className="group flex items-center gap-2 text-lg">
-                                            Mã đơn hàng: {orders[orderIndex].guid}
                                             <Button
                                                 size="icon"
                                                 variant="outline"
-                                                className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                                            >
-                                                <Copy className="h-3 w-3" />
-                                                <span className="sr-only" onClick={
+                                                className="h-8 w-12 transition-opacity "
+                                                onClick={
                                                     () => {
-                                                      
                                                         navigator.clipboard.writeText(
                                                             orders[orderIndex].guid
                                                         ).then(() => {
@@ -304,18 +423,19 @@ const DashboardHomePage = () => {
                                                         }
                                                         );
                                                     }
-                                                }>Sao chép mã đơn hàng</span>
+                                                }
+                                            >
+                                                <Copy className="h-3 w-3" />
+                                                <span className="sr-only">Sao chép mã đơn hàng</span>
                                             </Button>
+                                            Mã đơn hàng: {orders[orderIndex].guid}
                                         </CardTitle>
-                                        <CardDescription>Ngày tạo: {formatDate(orders[orderIndex].createdAt)}</CardDescription>
+                                        <CardDescription>
+                                            Ngày tạo: {formatDate(orders[orderIndex].createdAt)}
+
+                                        </CardDescription>
                                     </div>
                                     <div className="ml-auto flex items-center gap-1">
-                                        <Button size="sm" variant="outline" className="h-8 gap-1">
-                                            <Truck className="h-3.5 w-3.5" />
-                                            <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                                                Track Order
-                                            </span>
-                                        </Button>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button size="icon" variant="outline" className="h-8 w-8">
@@ -324,17 +444,77 @@ const DashboardHomePage = () => {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuItem>Edit</DropdownMenuItem>
-                                                <DropdownMenuItem>Export</DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <Button variant={"default"} className="w-full">Sửa</Button>
+                                                </DropdownMenuItem>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem>Trash</DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <Button variant={"destructive"} className="w-full">
+                                                        Xóa
+                                                    </Button>
+                                                </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
+
                                 </CardHeader>
                                 <CardContent className="p-6 text-sm">
+
                                     <div className="grid gap-3">
-                                        <div className="font-semibold">Chi tiết đơn hàng</div>
+                                        <div className="flex justify-between items-center gap-2">
+                                            <div className="font-semibold">Chi tiết đơn hàng</div>
+
+                                            <div className="text-muted-foreground">
+                                                {
+                                                    orders[orderIndex].status === "Done" ? <Badge className="text-xs" variant="default">
+                                                        {orders[orderIndex].status}
+                                                    </Badge> : orders[orderIndex].status === "Cancelled" ? <Badge className="text-xs" variant="destructive">
+                                                        {orders[orderIndex].status}
+                                                    </Badge> : <Badge className="text-xs bg-warning" variant="default">
+                                                        {orders[orderIndex].status}
+                                                    </Badge>
+                                                }
+                                            </div>
+
+                                        </div>
+                                        <Separator className="my-4" />
+                                        <Form {...form}>
+                                            <form onSubmit={form.handleSubmit(onSubmit)} className="flex justify-between items-center gap-x-4" >
+                                                <FormField
+                                                    control={form.control}
+                                                    name="status"
+                                                    render={({ field }) => (
+                                                        <FormItem className="w-full">
+                                                            <Select onValueChange={field.onChange}
+                                                                value={field.value}
+                                                            >
+                                                                <FormControl>
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Chọn trạng thái cần thay đổi" />
+                                                                    </SelectTrigger>
+                                                                </FormControl>
+                                                                <SelectContent>
+                                                                    {
+                                                                        Object.keys(OrderStatus).map((status) => {
+                                                                            return (
+                                                                                <SelectItem key={status} value={status}>
+                                                                                    {status}
+                                                                                </SelectItem>
+                                                                            )
+                                                                        })
+
+                                                                    }
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <Button type="submit">Submit</Button>
+                                            </form>
+                                        </Form>
+
+                                        <Separator className="my-4" />
+
                                         <ul className="grid gap-3">
                                             <li className="flex items-center justify-between">
                                                 <span className="text-muted-foreground">
@@ -382,6 +562,9 @@ const DashboardHomePage = () => {
                                             </div>
                                         </div>
                                     </div>
+                                    <div className="text-muted-foreground">
+                                        Ngày giao hàng dự kiến: {formatDate(orders[orderIndex].deliveryDate)}
+                                    </div>
                                     <Separator className="my-4" />
                                     <div className="grid gap-3">
                                         <div className="font-semibold">Thông tin khách hàng</div>
@@ -424,20 +607,26 @@ const DashboardHomePage = () => {
                                 </CardContent>
                                 <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
                                     <div className="text-xs text-muted-foreground">
-                                        Updated <time dateTime="2023-11-23">November 23, 2023</time>
+                                        Cập nhật ngày <time dateTime="2023-11-23">{
+                                            formatDate(orders[orderIndex].updatedAt)
+                                        }</time>
                                     </div>
                                     <Pagination className="ml-auto mr-0 w-auto">
                                         <PaginationContent>
                                             <PaginationItem>
-                                                <Button size="icon" variant="outline" className="h-6 w-6">
+                                                <Button size="icon" variant="outline" className="h-6 w-6" onClick={
+                                                    prevOrder
+                                                }>
                                                     <ChevronLeft className="h-3.5 w-3.5" />
-                                                    <span className="sr-only">Previous Order</span>
+                                                    <span className="sr-only" >Đơn hàng phía trước</span>
                                                 </Button>
                                             </PaginationItem>
                                             <PaginationItem>
-                                                <Button size="icon" variant="outline" className="h-6 w-6">
+                                                <Button size="icon" variant="outline" className="h-6 w-6" onClick={
+                                                    nextOrder
+                                                }>
                                                     <ChevronRight className="h-3.5 w-3.5" />
-                                                    <span className="sr-only">Next Order</span>
+                                                    <span className="sr-only" >Đơn hàng tiếp theo</span>
                                                 </Button>
                                             </PaginationItem>
                                         </PaginationContent>
@@ -452,12 +641,49 @@ const DashboardHomePage = () => {
     )
 }
 
-const DashboardOrderPage = () => {
+const DashboardHomePage = () => {
     return (
-        <main>
-
-        </main>
+        <DashboardNav>
+            <div className="hero min-h-screen" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1717267918107-469f3be10d4e?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' }}>
+                <div className="hero-overlay bg-opacity-60"></div>
+                <div className="hero-content text-center text-neutral-content">
+                    <div className="max-w-md">
+                        <h1 className="mb-5 text-5xl font-bold">Giặt xấy nhanh</h1>
+                    </div>
+                </div>
+            </div>
+        </DashboardNav>
     )
 };
 
-export { DashboardHomePage, DashboardOrderPage };
+const DashboardServicePage = () => {
+    return (
+        <DashboardNav>
+            <div className="hero min-h-screen" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1717267918107-469f3be10d4e?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' }}>
+                <div className="hero-overlay bg-opacity-60"></div>
+                <div className="hero-content text-center text-neutral-content">
+                    <div className="max-w-md">
+                        <h1 className="mb-5 text-5xl font-bold">Trang dịch vụ</h1>
+                    </div>
+                </div>
+            </div>
+        </DashboardNav>
+    )
+}
+
+const DashboardUserPage = () => {
+    return (
+        <DashboardNav>
+            <div className="hero min-h-screen" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1717267918107-469f3be10d4e?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' }}>
+                <div className="hero-overlay bg-opacity-60"></div>
+                <div className="hero-content text-center text-neutral-content">
+                    <div className="max-w-md">
+                        <h1 className="mb-5 text-5xl font-bold">Trang quản lý người dùng</h1>
+                    </div>
+                </div>
+            </div>
+        </DashboardNav>
+    )
+}
+
+export { DashboardOrderPage, DashboardHomePage, DashboardUserPage, DashboardServicePage };

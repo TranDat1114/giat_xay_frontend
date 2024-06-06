@@ -3,12 +3,13 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from "sonner"
-import { isAdmin } from '@/lib/utils';
+import { isAdmin, isTokenExpired } from '@/lib/utils';
 interface AuthContextType {
     accessToken: string | null;
     login: (email: string, password: string) => Promise<void>;
     logout: () => void;
     register: (userName: string, email: string, password: string) => Promise<void>;
+    isLogin: () => boolean;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -24,15 +25,16 @@ interface AuthProviderProps {
     children: ReactNode;
 }
 
-const isLogin = () => {
-    const value = localStorage.getItem('accessToken') !== null;
-    return value;
-}
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem('accessToken'));
     //   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem('refreshToken'));
     const navigate = useNavigate();
+
+
+    const isLogin = (): boolean => {
+        return isTokenExpired(localStorage.getItem('accessToken') as string) ? false : true;
+    }
 
     const login = async (email: string, password: string) => {
         const loginConfig = {
@@ -128,10 +130,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ accessToken, login, logout, register }}>
+        <AuthContext.Provider value={{ accessToken, login, logout, register, isLogin }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-export { AuthProvider, useAuth, isLogin };
+export { AuthProvider, useAuth };
