@@ -67,6 +67,7 @@ import {
 } from "@/components/ui/select"
 import { OrderStatus } from "@/lib/enums"
 import { Form, FormControl, FormItem, FormField } from "@/components/ui/form"
+import { NavLink } from "react-router-dom"
 const FormSchema = z.object({
     guid: z.string(),
     status: z.string(),
@@ -262,7 +263,7 @@ const DashboardOrderPage = () => {
                                             <span className="sr-only sm:not-sr-only">Sắp xếp</span>
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    
+
                                 </DropdownMenu>
                                 <Button
                                     size="sm"
@@ -287,7 +288,7 @@ const DashboardOrderPage = () => {
                                         <TableHeader>
                                             <TableRow>
                                                 <TableHead>
-                                                <Button variant="outline" size="sm" className="flex justify-between gap-x-2 items-center"
+                                                    <Button variant="outline" size="sm" className="flex justify-between gap-x-2 items-center"
                                                         onClick={() => {
                                                             sortfilteredOrdersA("laundryServiceName")
                                                         }}
@@ -445,7 +446,12 @@ const DashboardOrderPage = () => {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem>
-                                                    <Button variant={"default"} className="w-full">Sửa</Button>
+                                                    <NavLink className="w-full" to={
+                                                        `/dashboard-order/${orders[orderIndex].guid}`
+                                                    } >
+                                                        <Button variant={"default"} className="w-full">Sửa</Button>
+                                                    </NavLink>
+
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem>
@@ -641,49 +647,5 @@ const DashboardOrderPage = () => {
     )
 }
 
-const DashboardHomePage = () => {
-    return (
-        <DashboardNav>
-            <div className="hero min-h-screen" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1717267918107-469f3be10d4e?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' }}>
-                <div className="hero-overlay bg-opacity-60"></div>
-                <div className="hero-content text-center text-neutral-content">
-                    <div className="max-w-md">
-                        <h1 className="mb-5 text-5xl font-bold">Giặt xấy nhanh</h1>
-                    </div>
-                </div>
-            </div>
-        </DashboardNav>
-    )
-};
 
-const DashboardServicePage = () => {
-    return (
-        <DashboardNav>
-            <div className="hero min-h-screen" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1717267918107-469f3be10d4e?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' }}>
-                <div className="hero-overlay bg-opacity-60"></div>
-                <div className="hero-content text-center text-neutral-content">
-                    <div className="max-w-md">
-                        <h1 className="mb-5 text-5xl font-bold">Trang dịch vụ</h1>
-                    </div>
-                </div>
-            </div>
-        </DashboardNav>
-    )
-}
-
-const DashboardUserPage = () => {
-    return (
-        <DashboardNav>
-            <div className="hero min-h-screen" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1717267918107-469f3be10d4e?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' }}>
-                <div className="hero-overlay bg-opacity-60"></div>
-                <div className="hero-content text-center text-neutral-content">
-                    <div className="max-w-md">
-                        <h1 className="mb-5 text-5xl font-bold">Trang quản lý người dùng</h1>
-                    </div>
-                </div>
-            </div>
-        </DashboardNav>
-    )
-}
-
-export { DashboardOrderPage, DashboardHomePage, DashboardUserPage, DashboardServicePage };
+export { DashboardOrderPage };

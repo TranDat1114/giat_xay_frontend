@@ -4,7 +4,10 @@ import AboutPage from '@/pages/about';
 import Layout from '@/components/layout/layout';
 import SignInPage from '@/pages/signin';
 import SignUpPage from '@/pages/signup';
-import { DashboardHomePage, DashboardOrderPage, DashboardServicePage, DashboardUserPage } from '@/pages/dashboard';
+import { DashboardOrderPage } from '@/pages/dashboard-order';
+import { DashboardHomePage } from '@/pages/dashboard-home';
+import { DashboardUserPage } from '@/pages/dashboard-user';
+import { DashboardServicePage } from '@/pages/dashboard-service';
 import { isAdmin } from '@/lib/utils';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { Toaster } from "@/components/ui/sonner"
@@ -14,6 +17,7 @@ import CompleteOrdersLaundryPage from '@/pages/complete-orders-laundry';
 import { SingletonProvider } from '@/context/SingletonContext';
 import ListLaundryServicesPage from '@/pages/list-laundry-services';
 import ContactPage from '@/pages/contact';
+import UpdateOrerPage from './pages/update-orders';
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   return isAdmin() ? children : <Navigate to="/signin" />;
 };
@@ -46,26 +50,33 @@ function App() {
                     <SignInPage />
                   </IsNotLoginRoute>
                 } />
-                  <Route path="/dashboard-home" element={
-                    <PrivateRoute>
-                      <DashboardHomePage />
-                    </PrivateRoute>
-                  } />
-                  <Route path="/dashboard-order" element={
-                    <PrivateRoute>
-                      <DashboardOrderPage />
-                    </PrivateRoute>
-                  } />
-                  <Route path="/dashboard-user" element={
-                    <PrivateRoute>
-                      <DashboardUserPage />
-                    </PrivateRoute>
-                  } />
-                  <Route path="/dashboard-service" element={
-                    <PrivateRoute>
-                      <DashboardServicePage />
-                    </PrivateRoute>
-                  } />
+                <Route path="/dashboard-home" element={
+                  <PrivateRoute>
+                    <DashboardHomePage />
+                  </PrivateRoute>
+                } />
+                <Route path="/dashboard-order" element={
+                  <PrivateRoute>
+                    <DashboardOrderPage />
+                  </PrivateRoute>
+                } />
+
+                <Route path="/dashboard-order/:guid" element={
+                  <PrivateRoute>
+                    <UpdateOrerPage />
+                  </PrivateRoute>
+                } />
+
+                <Route path="/dashboard-user" element={
+                  <PrivateRoute>
+                    <DashboardUserPage />
+                  </PrivateRoute>
+                } />
+                <Route path="/dashboard-service" element={
+                  <PrivateRoute>
+                    <DashboardServicePage />
+                  </PrivateRoute>
+                } />
 
                 <Route path="/orders-laundry" element={<ListLaundryServicesPage />} />
                 <Route path="/orders-laundry/:guid" element={<OrdersLaundryPage />} />

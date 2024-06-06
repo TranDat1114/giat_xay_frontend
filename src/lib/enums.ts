@@ -1,8 +1,9 @@
 export enum Unit {
-    Weight, //Kg
-    Unit, //Bộ, Chiếc, Cái
-    Time, //Số lần
+    Weight = "Weight", //Kg
+    Unit = "Unit", //Bộ, Chiếc, Cái
+    Time = "Time", //Số lần
 }
+
 export enum OrderStatus {
     Pending = "Pending",
     Processing = "Processing",
@@ -10,4 +11,3 @@ export enum OrderStatus {
     Done = "Done",
     Cancelled = "Cancelled"
 }
-

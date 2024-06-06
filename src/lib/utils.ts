@@ -62,7 +62,7 @@ export function getUser(): jwtDecode {
   return decodedToken;
 }
 
-export function formatUnit(unit: Unit): string {
+export function formatUnit(unit: Unit | number): string {
   switch (unit) {
     case Unit.Weight:
       return 'Kg';
@@ -74,6 +74,8 @@ export function formatUnit(unit: Unit): string {
       return '';
   }
 }
+
+
 
 export function formatDateTime(dateTime: Date): string {
 
